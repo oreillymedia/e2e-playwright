@@ -1,0 +1,266 @@
+[
+ {
+   "ID": 1,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Home",
+   "URL": "https://learning.oreilly.review/home/"
+ },
+ {
+   "ID": 2,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Answers",
+   "URL": "https://learning.oreilly.review/answers/search/"
+ },
+ {
+   "ID": 3,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Answers Results",
+   "URL": "https://learning.oreilly.review/answers/results/?question=What+are+some+examples+of+functional+programming+languages%3F&page=1"
+ },
+ {
+   "ID": 4,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "404",
+   "URL": "https://learning.oreilly.review/404/"
+ },
+ {
+   "ID": 5,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "All Topics",
+   "URL": "https://learning.oreilly.review/topics/"
+ },
+ {
+   "ID": 6,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Courses",
+   "URL": "https://learning.oreilly.review/courses/"
+ },
+ {
+   "ID": 7,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Search",
+   "URL": "https://learning.oreilly.review/search"
+ },
+ {
+   "ID": 8,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Beta Search",
+   "URL": "https://learning.oreilly.review/beta-search/"
+ },
+ {
+   "ID": 9,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Publisher",
+   "URL": "https://learning.oreilly.review/publisher/oreilly-media-inc/"
+ },
+ {
+   "ID": 10,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Recommendations",
+   "URL": "https://learning.oreilly.review/recommendations/"
+ },
+ {
+   "ID": 11,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Playlists",
+   "URL": "https://learning.oreilly.review/playlists/discover/"
+ },
+ {
+   "ID": 12,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Playlist Detail",
+   "URL": "https://learning.oreilly.review/playlists/7dfe5d5f-5811-434e-a05a-0eec118af4f2/"
+ },
+ {
+   "ID": 13,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Assignments",
+   "URL": "https://learning.oreilly.review/assignments/"
+ },
+ {
+   "ID": 14,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Assignment Detail",
+   "URL": "https://learning.oreilly.review/assignments/1bdf7f75-4c3b-4ef9-9e6c-cdfb7aa8b78e/"
+ },
+ {
+   "ID": 15,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "All Live events",
+   "URL": "https://learning.oreilly.review/live-events/"
+ },
+ {
+   "ID": 16,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Featured Live Event",
+   "URL": "https://learning.oreilly.review/featured/architectural-katas/"
+ },
+ {
+   "ID": 17,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Live Event Detail",
+   "URL": "https://learning.oreilly.review/live-events/python-for-finance-in-2-weeks-with-interactivity/0636920055608/0636920080125/"
+ },
+ {
+   "ID": 18,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Interactive",
+   "URL": "https://learning.oreilly.review/interactive/"
+ },
+ {
+   "ID": 19,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Certifications",
+   "URL": "https://learning.oreilly.review/certifications/"
+ },
+ {
+   "ID": 20,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Your Preferences",
+   "URL": "https://learning.oreilly.review/preferences/"
+ },
+ {
+   "ID": 21,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Your Devices",
+   "URL": "https://learning.oreilly.review/device-pairing/"
+ },
+ {
+   "ID": 22,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "User Management",
+   "URL": "https://learning.oreilly.review/manage-users/"
+ },
+ {
+   "ID": 23,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Plans & Payment",
+   "URL": "https://learning.oreilly.review/p/subscribe/"
+ },
+ {
+   "ID": 24,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "B2B Subscribe",
+   "URL": "https://learning.oreilly.review/b2b-subscribe/"
+ },
+ {
+   "ID": 25,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Purchase Seats",
+   "URL": "https://learning.oreilly.review/purchase-seats/"
+ },
+ {
+   "ID": 26,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Your Profile",
+   "URL": "https://learning.oreilly.review/profile/"
+ },
+ {
+   "ID": 27,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Edit Profile",
+   "URL": "https://learning.oreilly.review/member/profile/"
+ },
+ {
+   "ID": 28,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Newsletters",
+   "URL": "https://www.oreilly.com/emails/newsletters/"
+ },
+ {
+   "ID": 29,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "O'Reilly Beta",
+   "URL": "https://learning.oreilly.review/beta/"
+ },
+ {
+   "ID": 30,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "History",
+   "URL": "https://learning.oreilly.review/history/"
+ },
+ {
+   "ID": 31,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Highlights",
+   "URL": "https://learning.oreilly.review/highlights/"
+ },
+ {
+   "ID": 32,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Workbooks",
+   "URL": "https://learning.oreilly.review/workbooks/"
+ },
+ {
+   "ID": 33,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Book Detail",
+   "URL": "https://learning.oreilly.review/library/view/learning-git/9781098133900/"
+ },
+ {
+   "ID": 34,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC\n* Expand Collapse SITB\n* Pin/Unpin SITB",
+   "Element": "UCV Book Reader",
+   "URL": "https://learning.oreilly.review/library/view/becoming-a-manager/9781422131084/Text/part005.html"
+ },
+ {
+   "ID": 35,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Video Detail",
+   "URL": "https://learning.oreilly.review/videos/how-cerner-is/0636920420934/0636920420934-video329858/"
+ },
+ {
+   "ID": 36,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Video Player",
+   "URL": "https://learning.oreilly.review/videos/exam-az-900-microsoft/9780137307005/9780137307005-A902_01_02_05/"
+ },
+ {
+   "ID": 37,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Audiobook Detail",
+   "URL": "https://learning.oreilly.review/videos/articulating-design-decisions/0636920472599/"
+ },
+ {
+   "ID": 38,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Audiobook Player",
+   "URL": "https://learning.oreilly.review/videos/the-act-of/9781663715234/9781663715234-a00003/"
+ },
+ {
+   "ID": 39,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Learning Path Detail",
+   "URL": "https://learning.oreilly.review/learning-paths/-/0636920342519/"
+ },
+ {
+   "ID": 40,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Learning Path Player",
+   "URL": "https://learning.oreilly.review/learning-paths/learning-path-spring/9781492055334/9781492055334-part01/"
+ },
+ {
+   "ID": 41,
+   "Description": "* Verify Navigation display on large, medium, and small Viewports\n* Expand/Collapse TOC\n* Pin/Unpin TOC",
+   "Element": "UCV Learning Path Reader",
+   "URL": "https://learning.oreilly.review/learning-paths/learning-path-introduction/9781492034940/9781449363819-/ch02.html"
+ },
+ {
+   "ID": 42,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Intertactive Lab",
+   "URL": "https://learning.oreilly.review/scenarios/challenge-make-a/9781098113933/"
+ },
+ {
+   "ID": 43,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Interactive Sandbox",
+   "URL": "https://learning.oreilly.review/scenarios/powershell-sandbox/9781098119263/"
+ },
+ {
+   "ID": 44,
+   "Description": "Verify Navigation display on large, medium, and small Viewports",
+   "Element": "Interactive Cloud Lab",
+   "URL": "https://learning.oreilly.review/scenarios/-/9781098132101/"
+ }
+]
