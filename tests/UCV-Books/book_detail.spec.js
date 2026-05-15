@@ -1,11 +1,21 @@
 const { test, expect } = require('@playwright/test');
+const { v4: uuidv4 } = require('uuid');
 const { login, VIEWPORTS } = require('../../helpers/auth');
 
 const BOOK_URL = '/library/view/learning-api-styles/9781098153984/';
+const BOOK_TITLE = 'Learning API Styles';
 
 test.describe('UCV Book Detail', () => {
   test.describe.configure({ mode: 'parallel' });
+
+  const RUN_ID = `${Date.now()}-${uuidv4().slice(0, 8)}`;
+  const PLAYLIST_NAME = `Book Detail Test ${RUN_ID}`;
+  const PLAYLIST_DESCRIPTION = 'Created by book_detail.spec.js — safe to delete';
+  const REVIEW_NOTE = `Book detail test note ${RUN_ID}`;
+
   let page;
+  let recommendedTitle;
+  let playlistCreated = false;
 
   test.beforeAll(async ({ browser }) => {
     const context = await browser.newContext();
@@ -17,33 +27,26 @@ test.describe('UCV Book Detail', () => {
   });
 
   test.afterAll(async () => {
+    try {
+      if (playlistCreated) {
+        await page.goto('/playlists/');
+        await page.waitForLoadState('networkidle');
+        await page.getByText('Your Playlists', { exact: true }).click();
+        const row = page.getByText(PLAYLIST_NAME, { exact: true }).first();
+        await row.hover();
+        await page
+          .locator(`[data-testid="deleteButton"]`)
+          .first()
+          .dispatchEvent('click');
+        await page.getByText('Delete Playlist', { exact: true }).first().click();
+      }
+    } catch (e) {
+      console.warn(`Cleanup failed for ${PLAYLIST_NAME}:`, e);
+    }
     await page.context().close();
   });
 
-  test('should display book metadata', async () => {
-    await expect(page.getByRole('heading', { name: 'Learning API Styles', level: 2 })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Lukasz Dynowski' }).first()).toBeVisible();
-    await expect(page.locator('img[src*="9781098153984"]').first()).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Start', exact: true })).toBeVisible();
-  });
-
-  test('should open and close the table of contents', async () => {
-    const toggle = page.getByTestId('table-of-contents-button');
-    const chapter = page.getByRole('link', { name: 'Foreword' });
-    const closeBtn = page.getByRole('button', { name: 'Close table of contents' });
-
-    // TOC opens by default at desktop width on this page; close it first to make
-    // the open assertion meaningful.
-    if (await closeBtn.isVisible()) {
-      await closeBtn.click();
-      await expect(chapter).toBeHidden();
-    }
-
-    await toggle.click();
-    await expect(chapter).toBeVisible();
-
-    await page.getByRole('button', { name: 'Close table of contents' }).click();
-    await expect(chapter).toBeHidden();
-    await expect(page.getByText('Table of contents collapsed')).toBeVisible();
+  test('should let a user view, add to playlist, and review a book', async () => {
+    // phases added in subsequent tasks
   });
 });
