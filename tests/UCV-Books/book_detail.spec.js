@@ -71,5 +71,28 @@ test.describe('UCV Book Detail', () => {
       await expect(chapter).toBeHidden();
       await expect(page.getByText('Table of contents collapsed')).toBeVisible();
     });
+
+    await test.step('create a unique playlist', async () => {
+      await page.goto('/playlists/');
+      await page.waitForLoadState('networkidle');
+      await page.getByText('Your Playlists', { exact: true }).click();
+
+      await page.locator('[data-testid="publicCreateButton"]').first().click();
+      await page
+        .locator('.MuiInputBase-root input[type="text"]')
+        .first()
+        .pressSequentially(PLAYLIST_NAME);
+      await page
+        .locator('[data-testid="playlist-description"] textarea')
+        .first()
+        .fill(PLAYLIST_DESCRIPTION);
+      await page.locator('[data-testid="submit"]').click();
+      await page.waitForLoadState('networkidle');
+
+      playlistCreated = true;
+
+      await page.goto(BOOK_URL);
+      await page.waitForLoadState('domcontentloaded');
+    });
   });
 });
