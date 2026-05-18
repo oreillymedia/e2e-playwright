@@ -94,5 +94,12 @@ test.describe('UCV Book Detail', () => {
       await page.goto(BOOK_URL);
       await page.waitForLoadState('domcontentloaded');
     });
+
+    await test.step('add this book to the playlist', async () => {
+      await page.getByText('Add to playlist').first().click();
+      await page.getByText(PLAYLIST_NAME, { exact: true }).first().click({ force: true });
+      await page.getByText('Done').first().click();
+      await expect(page.getByText('Done').first()).toBeHidden();
+    });
   });
 });
