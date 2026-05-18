@@ -53,5 +53,23 @@ test.describe('UCV Book Detail', () => {
       await expect(page.locator('img[src*="9781098153984"]').first()).toBeVisible();
       await expect(page.getByRole('link', { name: 'Start', exact: true })).toBeVisible();
     });
+
+    await test.step('open and close the table of contents', async () => {
+      const toggle = page.getByTestId('table-of-contents-button');
+      const chapter = page.getByRole('link', { name: 'Foreword' });
+      const closeBtn = page.getByRole('button', { name: 'Close table of contents' });
+
+      if (await closeBtn.isVisible()) {
+        await closeBtn.click();
+        await expect(chapter).toBeHidden();
+      }
+
+      await toggle.click();
+      await expect(chapter).toBeVisible();
+
+      await page.getByRole('button', { name: 'Close table of contents' }).click();
+      await expect(chapter).toBeHidden();
+      await expect(page.getByText('Table of contents collapsed')).toBeVisible();
+    });
   });
 });
