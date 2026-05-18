@@ -133,5 +133,32 @@ test.describe('UCV Book Detail', () => {
       await expect(page.getByText(BOOK_TITLE, { exact: false }).first()).toBeVisible();
       await expect(page.getByText(recommendedTitle, { exact: false }).first()).toBeVisible();
     });
+
+    await test.step('write a unique review note', async () => {
+      await page.goto(BOOK_URL);
+      await page.waitForLoadState('domcontentloaded');
+
+      await page.getByRole('button', { name: /review for .* – open to read or write a review/i }).click();
+
+      const dialog = page.locator('[role="dialog"][data-ismodal="true"]');
+      const editButton = dialog.getByRole('button', { name: 'Edit your review' });
+      const writeButton = dialog.getByRole('button', { name: 'Write a review', exact: true });
+
+      try {
+        await expect(editButton).toBeVisible({ timeout: 15000 });
+        await editButton.click();
+      } catch {
+        await writeButton.click();
+        await page.getByRole('button', { name: 'Rate 5 stars' }).last().click();
+      }
+
+      const noteField = page.getByRole('textbox', { name: 'Your review (optional)' });
+      await noteField.fill(REVIEW_NOTE);
+      const saveButton = page.getByRole('button', { name: 'Save your review' });
+      await expect(saveButton).toBeEnabled();
+      await saveButton.click();
+
+      await expect(page.getByText(REVIEW_NOTE, { exact: false })).toBeVisible();
+    });
   });
 });
