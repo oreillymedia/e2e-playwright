@@ -47,6 +47,11 @@ test.describe('UCV Book Detail', () => {
   });
 
   test('should let a user view, add to playlist, and review a book', async () => {
-    // phases added in subsequent tasks
+    await test.step('verify book metadata', async () => {
+      await expect(page.getByRole('heading', { name: BOOK_TITLE, level: 2 })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Lukasz Dynowski' }).first()).toBeVisible();
+      await expect(page.locator('img[src*="9781098153984"]').first()).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Start', exact: true })).toBeVisible();
+    });
   });
 });
