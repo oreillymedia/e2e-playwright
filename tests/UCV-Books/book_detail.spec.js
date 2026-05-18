@@ -122,5 +122,16 @@ test.describe('UCV Book Detail', () => {
         await page.waitForLoadState('domcontentloaded');
       }
     });
+
+    await test.step('verify both titles appear in the playlist', async () => {
+      await page.goto('/playlists/');
+      await page.waitForLoadState('networkidle');
+      await page.getByText('Your Playlists', { exact: true }).click();
+      await page.getByText(PLAYLIST_NAME, { exact: true }).first().click();
+      await page.waitForLoadState('networkidle');
+
+      await expect(page.getByText(BOOK_TITLE, { exact: false }).first()).toBeVisible();
+      await expect(page.getByText(recommendedTitle, { exact: false }).first()).toBeVisible();
+    });
   });
 });
