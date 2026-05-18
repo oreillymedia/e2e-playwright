@@ -101,5 +101,26 @@ test.describe('UCV Book Detail', () => {
       await page.getByText('Done').first().click();
       await expect(page.getByText('Done').first()).toBeHidden();
     });
+
+    await test.step('add a recommendation to the same playlist', async () => {
+      const recsHeading = page.getByRole('heading', { name: 'You might also like', level: 2 });
+      const recsContainer = recsHeading.locator('..');
+      const firstCard = recsContainer.locator('article').first();
+      const cardAddToPlaylist = firstCard.getByRole('button', { name: 'Add to playlist', exact: true });
+
+      await recsHeading.scrollIntoViewIfNeeded();
+      recommendedTitle = (await firstCard.getByRole('link').first().textContent())?.trim();
+      expect(recommendedTitle, 'captured recommended title should be non-empty').toBeTruthy();
+
+      await cardAddToPlaylist.click();
+      await page.getByText(PLAYLIST_NAME, { exact: true }).first().click({ force: true });
+      await page.getByText('Done').first().click();
+      await expect(page.getByText('Done').first()).toBeHidden();
+
+      if (!page.url().includes('9781098153984')) {
+        await page.goto(BOOK_URL);
+        await page.waitForLoadState('domcontentloaded');
+      }
+    });
   });
 });
