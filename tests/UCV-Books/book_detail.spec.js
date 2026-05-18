@@ -138,7 +138,7 @@ test.describe('UCV Book Detail', () => {
       await page.goto(BOOK_URL);
       await page.waitForLoadState('domcontentloaded');
 
-      await page.getByRole('button', { name: /review for .* – open to read or write a review/i }).click();
+      await page.getByRole('button', { name: /reviews? for .* – open to read or write a review/i }).click();
 
       const dialog = page.locator('[role="dialog"][data-ismodal="true"]');
       const editButton = dialog.getByRole('button', { name: 'Edit your review' });
