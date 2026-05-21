@@ -40,7 +40,8 @@ tests/                  Test specs, grouped by feature area
   quizzes/              Quiz purchase + take
   search/               Search results
   UCV-Books/            Book reader (UCV = Unified Content Viewer)
-  Usage/                Usage-event simulation specs
+  Usage/                Usage-event simulation specs — verifies /api/v2/usage-event/
+                        firing across reading, idle, and navigation scenarios
 helpers/auth.js         login(), signup(), VIEWPORTS
 fixtures/login.js       Test credentials per env (prod/review)
 fixtures/questions.js   Quiz answer fixtures
@@ -106,6 +107,27 @@ await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
    - Add waits where the app does async work (OTP send, SSO handoff)
 4. **Run with `--debug`** to step through and verify each assertion.
 5. **Run headless twice** to confirm stability before opening a PR.
+
+## Usage-event coverage spec
+
+`tests/Usage/b2b-ucv-reader-usage.spec.js` simulates a fresh B2B user signing up and reading multiple chapters of a UCV book. It's the canonical reference for verifying `/api/v2/usage-event/` behavior end-to-end.
+
+**What it verifies:**
+- Events fire roughly every 15 seconds while the user is on a chapter URL (`.../ch0X.html`)
+- Events stop the moment the user navigates to a non-chapter URL (home, book detail)
+- Events stop after ~2 minutes of inactivity even if the user stays on a chapter page
+- Events resume immediately after the user interacts again (page-down, scroll, etc.)
+
+**Step naming convention** — visible in the HTML report:
+
+| Step | Purpose |
+|---|---|
+| `USER CREATION` | Self-registration + OTP. Produces no events (non-chapter URL). |
+| `TEST 1`, `TEST 2`, ... | Each numbered test is one verifiable scenario with a clear wall-clock window. |
+
+To check results in the DB, match each step's start/end timestamps against the user's email — `qa+b2busage-<ms>@oreillynet.com`, generated per run.
+
+**Runtime:** ~10-12 minutes per run, mostly because of the 3-minute idle window in the final test. The per-test timeout is bumped to 20 minutes via `test.setTimeout()` in the spec.
 
 ## Snapshots / visual diffs
 
