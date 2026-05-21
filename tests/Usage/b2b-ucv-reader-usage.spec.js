@@ -29,6 +29,20 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
   // already exist in the auth system).
   const uniqueEmail = `qa+b2busage-${Date.now()}@oreillynet.com`;
 
+  // Auto-dismiss the OneTrust cookie banner whenever it appears and blocks
+  // an action. The banner overlays the bottom of the page and intercepts clicks
+  // like the chapter "Next" link. Using Playwright's addLocatorHandler is the
+  // canonical fix: when an action is interrupted by #onetrust-banner-sdk,
+  // Playwright calls the handler (which clicks the real Accept button, setting
+  // the consent cookie) and then retries the original action.
+  await page.addLocatorHandler(
+    page.locator('#onetrust-banner-sdk'),
+    async () => {
+      await page.getByRole('button', { name: 'Accept Cookies' }).click();
+    },
+    { noWaitAfter: true }
+  );
+
   // USER CREATION: create a new B2B user via self-registration signup.
   // No usage events are expected during this step — registration is not
   // a chapter URL.
@@ -55,25 +69,37 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
     await page.waitForURL((url) => !url.toString().includes('self-registration'), { timeout: 30000 });
   });
 
-  // TEST 1: actively read Chapter 1 for ~60 seconds.
-  // 80 PageDowns × 750ms = 60s of sustained activity on a chapter URL,
-  // which should produce ~4 usage events (one every ~15s).
+  // TEST 1: actively read Chapter 1 for ~60 seconds, then click "Next" to
+  // navigate to Chapter 2. 80 PageDowns × 750ms = 60s of sustained activity
+  // on a chapter URL, which should produce ~4 usage events (one every ~15s).
   await test.step('Scroll down to the bottom of Chapter 1 over 60 seconds then clicks to next chapter', async () => {
     await page.goto('https://learning.oreilly.review/library/view/learning-api-styles/9781098153984/ch01.html#id4');
     for (let i = 0; i < 80; i++) {
       await page.locator('#book-content').press('PageDown');
       await page.waitForTimeout(750);
     }
+    // Click the "Next" link at the bottom of the chapter to advance to Chapter 2.
+    // The accessible name includes the chapter number prefix (e.g. "2. API Design Patterns").
+    await page.getByTestId('statusBarNext').getByRole('link', { name: '2. API Design Patterns' }).click();
   });
 
-  // TEST 2: actively read Chapter 2 for ~60 seconds (same pacing as ch1).
-  // Expected events: ~4.
-  await test.step('Scroll to the bottom of Chapter 2 over 60 seconds then clicks TOC link to the next chapter', async () => {
-    await page.goto('https://learning.oreilly.review/library/view/learning-api-styles/9781098153984/ch02.html#chapter-api-design-patterns-language');
-    for (let i = 0; i < 80; i++) {
+  // TEST 2: actively read Chapter 2 — scroll to the bottom over 30 seconds,
+  // then scroll back to the top over 30 seconds, then navigate to Chapter 3
+  // via a TOC click. Total ~60 seconds of activity → expected events: ~4.
+  await test.step('Scroll to the bottom of Chapter 2 over 30 seconds then scroll back to the top over 30 seconds then clicks TOC link to the next chapter', async () => {
+    // Scroll to the bottom over 30 seconds (40 page-downs at 750ms).
+    for (let i = 0; i < 40; i++) {
       await page.locator('#book-content').press('PageDown');
       await page.waitForTimeout(750);
     }
+    // Scroll back to the top over 30 seconds.
+    for (let i = 0; i < 40; i++) {
+      await page.locator('#book-content').press('PageUp');
+      await page.waitForTimeout(750);
+    }
+    // Click the Chapter 3 link in the Table of Contents to navigate there.
+    // The link text includes the chapter number prefix (e.g. "3. Network").
+    await page.getByTestId('toc-part-title-9781098153984-/ch03.html').getByRole('link', { name: '3. Network' }).click();
   });
 
   // TEST 3: read Chapter 3 briefly, then leave the reading experience.
@@ -82,7 +108,6 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
   // home-logo click and the next chapter navigation. This confirms
   // events stop when the user leaves a chapter URL.
   await test.step('Scroll to the middle of chapter 3 over 30 seconds, then click back to the home page via the O\'Reilly logo', async () => {
-    await page.goto('https://learning.oreilly.review/library/view/learning-api-styles/9781098153984/ch03.html');
     for (let i = 0; i < 25; i++) {
       await page.locator('#book-content').press('PageDown');
       await page.waitForTimeout(1200);
