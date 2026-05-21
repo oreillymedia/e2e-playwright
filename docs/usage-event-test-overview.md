@@ -22,7 +22,7 @@ Each step below produces a clear timestamp window. Pair the start/end of each st
 | **TEST 1: Chapter 1** | ~60s | User scrolls steadily through Chapter 1 of *Learning API Styles*. | ~4 events |
 | **TEST 2: Chapter 2** | ~60s | Same pattern as TEST 1, but on Chapter 2. | ~4 events |
 | **TEST 3: Chapter 3 → Home** | ~60s | User reads Chapter 3 briefly, then clicks the O'Reilly logo to return to the home page and waits 30 seconds. | ~2 events during reading, then **0 events** during the 30-second home-page window (the "silent" check) |
-| **TEST 4: Chapter 4 back-and-forth** | ~2.5 min | User scrolls Chapter 4 in three passes — to the middle (30s), back to the top (30s), all the way to the bottom (60s), then pauses 30 seconds at the bottom. Finally clicks the book title to return to the book detail page. | ~10 events across the 2.5 minutes of activity, then **0** after leaving the chapter |
+| **TEST 4: Chapter 4 middle → top → bottom** | ~2.5 min | User scrolls Chapter 4 in three passes — to the middle (30s), back to the top (30s), all the way to the bottom (60s), then pauses 30 seconds at the bottom. Finally clicks the book title to return to the book detail page. | ~10 events across the 2.5 minutes of activity, then **0** after leaving the chapter |
 | **TEST 5: Idle and reactivation on Chapter 5** | ~4.5 min | User reads Chapter 5 for 30 seconds, then **idles for 3 minutes** without touching the keyboard or mouse. After the idle, the user presses page-down 3 times to wake the session and reads for another 45 seconds. Finally returns to the home page. | ~2 events during the initial reading, **0 events** during the 3-minute idle (after ~2 min mark), then ~3 events after reactivation |
 
 ## Why each step matters
