@@ -262,6 +262,58 @@ test.describe('Create New SS', () => {
     await expect(page.getByText('You have 1 available seats waiting to be filled.').first()).toBeVisible({ timeout: 60000 });
   });
 
+  // Disabled: the "For Business" flow on /start-trial/ has been turned off in the UI.
+  // Restore this test when the b2b trial signup is re-enabled.
+  // test('should create a new b2b trial account', async ({ page }) => {
+  //   test.setTimeout(120000);
+  //   const id = uuidv4();
+  //   const newUser = createNewUserInfo({ type: 'b2bTrial' });
+  //   await page.goto('/start-trial/');
+  //   await page.getByText('For Business').click();
+  //   await page.locator('input[name="first_name"]').fill(newUser.firstName);
+  //   await page.locator('input[name="last_name"]').fill(newUser.lastName);
+  //   await page.locator('input[name="email"]').fill(newUser.email);
+  //   await page.locator('input[name="phone"]').fill('7075554444');
+  //   await page.locator('input[name="password"]').fill(newUser.password);
+  //   await page.locator('input[name="company"]').fill('B2B Trial Inc.');
+  //   await page.locator('input[name="position"]').fill('CEO');
+  //   await page.locator('[name="t_c_agreement"]').click();
+  //   await page.getByText('Start free trial').click();
+  //   await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
+  //   await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
+  //   await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
+  //   await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
+  //   await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
+  //   await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
+  //   await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+  //   await page.waitForURL('**/manage-users/**', { timeout: 60000 });
+  //   await expect(page.getByText('You have 4 available seats waiting to be filled.').first()).toBeVisible({ timeout: 60000 });
+  //   // Invite user
+  //   await page.getByText('Invite Members').first().click({ force: true });
+  //   await page.locator('input[name="firstName"]').fill('B2B Trial');
+  //   await page.locator('input[name="lastName"]').fill('User');
+  //   await page.locator('input[name="email"]').fill(`qa+b2bTrial_${id.substring(0, 13)}@oreillynet.com`);
+  //   await page.getByText('Send Invite').first().click({ force: true });
+  //   await expect(page.getByText('You have 3 available seats waiting to be filled.').first()).toBeVisible({ timeout: 60000 });
+  //   // Dismiss trial welcome modal if present
+  //   const welcomeModal = page.frameLocator('iframe').locator('button:has-text("Get started")');
+  //   if (await welcomeModal.isVisible({ timeout: 5000 }).catch(() => false)) {
+  //     await welcomeModal.click();
+  //   }
+  //   // Deactivate User
+  //   await page.evaluate(() => { const el = document.querySelector('.appcues'); if (el) el.remove(); });
+  //   await page.locator('input[name="filter"]').fill('user');
+  //   await page.locator('input[name="active"]').click();
+  //   await page.getByRole('button', { name: 'Deactivate' }).click();
+  //   // Reactivate User
+  //   await expect(page.getByRole('heading', { name: 'Members' })).toBeVisible();
+  //   await page.locator('[name="valid-users-filter"]').waitFor();
+  //   await page.locator('[name="valid-users-filter"]').selectOption('Deactivated');
+  //   await page.locator('input[name="active"]').click();
+  //   await page.getByRole('button', { name: 'Activate' }).click();
+  //   await expect(page.getByText('You have 3 available seats waiting to be filled.').first()).toBeVisible();
+  // });
+
   test('should create a new self-service account with a Payment Update and Cancellation', async ({ page }) => {
     test.setTimeout(180000);
     const id = uuidv4();

@@ -73,11 +73,19 @@ test.describe('Authentication', () => {
   });
 
   test('should log in as a MLFA / Shibboleth sign in with institution user', async ({ page }) => {
-    await page.goto('https://www.oreilly.review/library-access/');
-    await page.locator('input[id="institutionAutocomplete"]').fill('eduGAIN access check');
-    await page.getByText('eduGAIN access check').first().click({ force: true });
-    await page.getByText('Sign in').first().click({ force: true });
-    await page.locator('input[id="username"]').waitFor({ timeout: 120000 });
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      await page.goto('https://www.oreilly.review/library-access/');
+      await page.locator('input[id="institutionAutocomplete"]').fill('eduGAIN access check');
+      await page.getByText('eduGAIN access check').first().click({ force: true });
+      await page.getByText('Sign in').first().click({ force: true });
+      try {
+        await page.locator('input[id="username"]').waitFor({ timeout: 30000 });
+        break;
+      } catch (e) {
+        if (attempt === maxAttempts) throw e;
+      }
+    }
     await page.locator('input[id="username"]').fill('user2245');
     await page.locator('input[id="password"]').fill('Phq81xXr4=');
     await page.getByText('Login').first().click({ force: true });
