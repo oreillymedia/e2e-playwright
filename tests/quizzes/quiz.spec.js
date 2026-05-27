@@ -45,14 +45,16 @@ test.describe('Quizzes', () => {
         document.getElementById('onetrust-consent-sdk')?.remove();
         document.querySelector('[class*="_certsContainer_"]')?.remove();
       });
-      await page.getByRole('radio', { name: 'Microsoft SQL Server' }).click();
+      // Learnosity hides the real <input> via CSS and proxies clicks via the label,
+      // so Playwright's visibility check fails — use { force: true } on all quiz answers.
+      await page.getByRole('radio', { name: 'Microsoft SQL Server' }).click({ force: true });
       await page.getByText('Check Answer').first().click();
       await page.getByText('Next').first().click();
-      await page.getByRole('radio', { name: 'No, the table is not normalized.' }).click();
+      await page.getByRole('radio', { name: 'No, the table is not normalized.' }).click({ force: true });
       await page.getByText('Next').first().click();
-      await page.getByRole('radio', { name: 'False' }).click();
+      await page.getByRole('radio', { name: 'False' }).click({ force: true });
       await page.getByText('Next').first().click();
-      await page.getByRole('checkbox', { name: 'Flower' }).click();
+      await page.getByRole('checkbox', { name: 'Flower' }).click({ force: true });
       await page.getByText('Finish').first().click();
       await page.getByText('Yes').first().click({ force: true });
       await expect(page.getByText('You got 75% correct').first()).toBeVisible();
@@ -62,14 +64,14 @@ test.describe('Quizzes', () => {
         document.getElementById('onetrust-consent-sdk')?.remove();
         document.querySelector('[class*="_certsContainer_"]')?.remove();
       });
-      await page.getByRole('radio', { name: 'Microsoft SQL Server' }).click();
+      await page.getByRole('radio', { name: 'Microsoft SQL Server' }).click({ force: true });
       await page.getByText('Next').first().click();
-      await page.getByRole('radio', { name: 'No, the table is not normalized.' }).click();
+      await page.getByRole('radio', { name: 'No, the table is not normalized.' }).click({ force: true });
       await page.getByText('Next').first().click();
-      await page.getByRole('radio', { name: 'False' }).click();
+      await page.getByRole('radio', { name: 'False' }).click({ force: true });
       await page.getByText('Next').first().click();
-      await page.getByRole('checkbox', { name: 'Lion' }).click();
-      await page.getByRole('checkbox', { name: 'Monkey' }).click();
+      await page.getByRole('checkbox', { name: 'Lion' }).click({ force: true });
+      await page.getByRole('checkbox', { name: 'Monkey' }).click({ force: true });
       await page.getByText('Finish').first().click();
       await page.getByText('Yes').first().click({ force: true });
       await expect(page.getByText('You got 100% correct').first()).toBeVisible();
