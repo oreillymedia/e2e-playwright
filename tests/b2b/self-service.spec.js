@@ -3,10 +3,6 @@ const { v4: uuidv4 } = require('uuid');
 const { createNewUserInfo } = require('../../utils/user');
 const { VIEWPORTS } = require('../../helpers/auth');
 
-// NOTE: cy.frameLoaded / cy.iframe → page.frameLocator() in Playwright
-// NOTE: cy.timeout() is not a standard Cypress command; replaced with test.setTimeout()
-// NOTE: Cypress.on('uncaught:exception') not needed — Playwright doesn't fail on uncaught page exceptions
-
 /** Fill the Zuora payment iframe with card details and submit. */
 async function fillPaymentIframe(page, { cardNumber = '4456530000001005', expMonth = '09', expYear = '2028' } = {}) {
   const iframe = page.frameLocator('#z_hppm_iframe');
@@ -262,8 +258,8 @@ test.describe('Create New SS', () => {
     await expect(page.getByText('You have 1 available seats waiting to be filled.').first()).toBeVisible({ timeout: 60000 });
   });
 
-  // Disabled: the "For Business" flow on /start-trial/ has been turned off in the UI.
-  // Restore this test when the b2b trial signup is re-enabled.
+  // **Disabled: the "For Business" flow on /start-trial/ has been turned off in the UI.
+  // **Restore this test when the b2b trial signup is re-enabled.
   // test('should create a new b2b trial account', async ({ page }) => {
   //   test.setTimeout(120000);
   //   const id = uuidv4();

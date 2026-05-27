@@ -25,7 +25,7 @@ test.describe('Authentication', () => {
     });
   }
 
-  test.fixme('should login as a M2M SSO user', async ({ page }) => {
+  test('should login as a M2M SSO user', async ({ page }) => {
     // TODO: SSO account airforce_one@mail.mil.invalid returns error=access_revoked on review env.
     // Re-provision the Okta account or update credentials when access is restored.
     await page.goto('https://learning.oreilly.review/home/');
