@@ -59,8 +59,10 @@ test.describe('UCV Book Detail', () => {
       const chapter = page.getByRole('link', { name: 'Foreword' });
       const closeBtn = page.getByRole('button', { name: 'Close table of contents' });
 
+      // eslint-disable-next-line playwright/no-conditional-in-test -- repair test state if a prior step left the TOC open
       if (await closeBtn.isVisible()) {
         await closeBtn.click();
+        // eslint-disable-next-line playwright/no-conditional-expect -- expect within recovery branch is intentional
         await expect(chapter).toBeHidden();
       }
 
@@ -117,6 +119,7 @@ test.describe('UCV Book Detail', () => {
       await page.getByText('Done').first().click();
       await expect(page.getByText('Done').first()).toBeHidden();
 
+      // eslint-disable-next-line playwright/no-conditional-in-test -- recover if async actions navigated us off the book page
       if (!page.url().includes('9781098153984')) {
         await page.goto(BOOK_URL);
         await page.waitForLoadState('domcontentloaded');

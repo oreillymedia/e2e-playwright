@@ -1,6 +1,7 @@
 const { test, expect } = require('@playwright/test');
 const { createNewUserInfo } = require('../../utils/user');
 const { VIEWPORTS } = require('../../helpers/auth');
+const { fillMFACode } = require('../../utils/mfa');
 
 // NOTE: cy.origin() for PayPal sandbox cross-origin flow is not needed in Playwright —
 // cross-origin navigation is handled natively. Just interact with the PayPal page directly.
@@ -24,13 +25,7 @@ test.describe('Create PayPal Subscriber', () => {
       await page.locator('input[name="password"]').fill(newUser.password);
       await page.locator('[name="t_c_agreement"]').click();
       await page.getByText('Start free trial').click();
-      await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-      await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-      await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-      await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-      await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-      await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-      await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+      await fillMFACode(page);
       await page.locator('[data-testid="toggle-popover-my-oreilly"]').waitFor({ timeout: 60000 });
       await page.goto('p/subscribe/');
       await page.getByRole('radio', { name: /Annual/ }).click();
@@ -65,13 +60,7 @@ test.describe('Create PayPal Subscriber', () => {
       await page.locator('input[type="password"]').fill(newUser.password);
       await page.getByRole('checkbox').click();
       await page.locator('#create-account-button').click();
-      await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-      await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-      await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-      await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-      await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-      await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-      await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+      await fillMFACode(page);
       await page.locator('#payment-choice-pp').click();
       await page.getByLabel('Postal or zip code').fill('95472');
       await page.getByText('Continue').click();
@@ -102,13 +91,7 @@ test.describe('Create PayPal Subscriber', () => {
       await page.locator('input[type="password"]').fill(newUser.password);
       await page.getByRole('checkbox').click();
       await page.locator('#create-account-button').click();
-      await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-      await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-      await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-      await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-      await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-      await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-      await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+      await fillMFACode(page);
       await page.locator('#payment-choice-pp').click();
       await page.getByLabel('Postal or zip code').fill('95472');
       await page.getByText('Continue').click();

@@ -83,6 +83,7 @@ test.describe('Authentication', () => {
         await page.locator('input[id="username"]').waitFor({ timeout: 30000 });
         break;
       } catch (e) {
+        // eslint-disable-next-line playwright/no-conditional-in-test -- retry navigation when external IdP form is slow to load
         if (attempt === maxAttempts) throw e;
       }
     }

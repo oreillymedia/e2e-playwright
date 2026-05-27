@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { fillMFACode } from '../../utils/mfa.js';
 
 /**
  * End-to-end usage-event coverage spec.
@@ -55,13 +56,7 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
     await page.getByRole('button', { name: 'Set Up My Account' }).click();
     // OTP digit inputs use aria-disabled; raw selector + pressSequentially
     // is required. The review env accepts `abc123` as the magic verification code.
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     // After OTP, the auth backend does an SSO handoff to set cookies on
     // learning.oreilly.review. We need to wait for that redirect before
     // navigating to a chapter page, otherwise the chapter URL would
@@ -120,6 +115,7 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
     // the first home-page visit. Conditional so returning users (or runs
     // where Appcues isn't loaded) don't fail.
     const appcuesPopup = page.locator('appcues-container iframe').contentFrame().locator('appcues');
+    // eslint-disable-next-line playwright/no-conditional-in-test -- dismiss Appcues popup only when present
     if (await appcuesPopup.isVisible().catch(() => false)) {
       await appcuesPopup.click();
     }

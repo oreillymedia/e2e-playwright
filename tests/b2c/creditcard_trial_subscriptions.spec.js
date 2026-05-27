@@ -1,22 +1,8 @@
 const { test, expect } = require('@playwright/test');
 const { createNewUserInfo } = require('../../utils/user');
 const { VIEWPORTS } = require('../../helpers/auth');
-
-// NOTE: cy.frameLoaded / cy.iframe → page.frameLocator() in Playwright
-// NOTE: cy.contains('Postal or zip code').type() → page.getByLabel('Postal or zip code').fill()
-// NOTE: Cypress.on('uncaught:exception') not needed in Playwright
-
-/** Fill the Zuora payment iframe with card details and submit. */
-async function fillPaymentIframe(page, { cardNumber = '4456530000001005', expMonth = '09', expYear = '2028' } = {}) {
-  const iframe = page.frameLocator('#z_hppm_iframe');
-  await iframe.locator('input[name="field_creditCardHolderName"]').waitFor({ state: 'visible' });
-  await iframe.locator('input[name="field_creditCardHolderName"]').fill('Card Holder');
-  await iframe.locator('input[name="field_creditCardNumber"]').fill(cardNumber);
-  await iframe.locator('#input-creditCardExpirationMonth').selectOption(expMonth);
-  await iframe.locator('#input-creditCardExpirationYear').selectOption(expYear);
-  await iframe.locator('input[name="field_cardSecurityCode"]').fill('001');
-  await iframe.locator('#submitButton').click();
-}
+const { fillPaymentIframe } = require('../../utils/payment');
+const { fillMFACode } = require('../../utils/mfa');
 
 test.describe('B2C', () => {
   test.describe.configure({ mode: 'parallel' });
@@ -36,13 +22,7 @@ test.describe('B2C', () => {
     await page.locator('input[name="password"]').fill(newUser.password);
     await page.locator('[name="t_c_agreement"]').click();
     await page.getByText('Start free trial').click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.locator('[data-testid="toggle-popover-my-oreilly"]').waitFor({ timeout: 60000 });
     await page.goto('p/subscribe/');
     await expect(page.getByTestId('alertContainer')).toContainText("You are currently previewing the O\u2019Reilly Learning Platform.");
@@ -58,13 +38,7 @@ test.describe('B2C', () => {
     await page.locator('input[name="password"]').fill(newUser.password);
     await page.locator('[name="t_c_agreement"]').click();
     await page.getByText('Start Free Trial').click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.locator('[data-testid="toggle-popover-my-oreilly"]').waitFor({ timeout: 60000 });
     await page.goto('p/subscribe/');
     await expect(page.getByTestId('alertContainer')).toContainText("You are currently previewing the O\u2019Reilly Learning Platform.");
@@ -102,13 +76,7 @@ test.describe('B2C', () => {
     await page.locator('select[name="country"]').selectOption('Ireland');
     await page.locator('[name="t_c_agreement"]').click();
     await page.getByText('Create account').click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.getByText('Credit or debit card', { exact: false }).first().click({ timeout: 60000 });
     await page.getByLabel('Postal or zip code').waitFor();
     await page.getByLabel('Postal or zip code').fill('D01 H104');
@@ -149,13 +117,7 @@ test.describe('B2C', () => {
     await page.locator('input[name="password"]').fill(newUser.password);
     await page.locator('[name="t_c_agreement"]').click();
     await page.locator('#create-account-button').click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.getByLabel('Postal or zip code').fill('90210');
     await page.getByText('Continue').first().click({ force: true });
     await fillPaymentIframe(page, { expMonth: '05', expYear: '2026' });
@@ -177,13 +139,7 @@ test.describe('B2C', () => {
     await page.locator('input[name="password"]').fill(newUser.password);
     await page.locator('[name="t_c_agreement"]').click();
     await page.locator('#create-account-button').click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.getByLabel('Postal or zip code').fill('110003');
     await page.locator('select[name="field_creditCardCountry"]').selectOption('India');
     await page.locator('input[name="creditCardAddress1"]').waitFor();
@@ -210,13 +166,7 @@ test.describe('B2C', () => {
     await page.locator('input[name="password"]').fill(newUser.password);
     await page.locator('[name="t_c_agreement"]').click();
     await page.locator('#create-account-button').click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.getByLabel('Postal or zip code').fill('90210');
     await page.getByText('Continue').first().click({ force: true });
     await fillPaymentIframe(page, { expMonth: '10', expYear: '2029' });
@@ -242,13 +192,7 @@ test.describe('B2C', () => {
     await page.locator('input[name="password"]').fill(newUser.password);
     await page.locator('[name="t_c_agreement"]').click();
     await page.locator('#create-account-button').click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.getByLabel('Postal or zip code').fill('90210');
     await page.getByText('Continue').first().click({ force: true });
     await fillPaymentIframe(page, { expMonth: '01', expYear: '2030' });
@@ -275,13 +219,7 @@ test.describe('B2C', () => {
     await page.getByRole('checkbox').click();
     await page.getByRole('textbox', { name: 'Promo code' }).fill('30day');
     await page.getByRole('button', { name: 'Activate account' }).click();
-    await page.locator('input[aria-label="digit 1 of 6"]').waitFor();
-    await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
-    await page.locator('input[aria-label="digit 2 of 6"]').pressSequentially('b');
-    await page.locator('input[aria-label="digit 3 of 6"]').pressSequentially('c');
-    await page.locator('input[aria-label="digit 4 of 6"]').pressSequentially('1');
-    await page.locator('input[aria-label="digit 5 of 6"]').pressSequentially('2');
-    await page.locator('input[aria-label="digit 6 of 6"]').pressSequentially('3');
+    await fillMFACode(page);
     await page.locator('[data-testid="toggle-popover-my-oreilly"]').waitFor({ timeout: 60000 });
     await page.goto('/p/subscribe/');
     await page.getByRole('link', { name: 'Plans & Payment' }).click();
