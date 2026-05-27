@@ -85,7 +85,6 @@ class UsageEventTracker {
     } else {
       summary = `${count} events, all 2xx ✓`;
     }
-    // eslint-disable-next-line no-console -- progress log for long-running test
     console.log(`[usage-event] ${label}: ${summary}`);
   }
 
