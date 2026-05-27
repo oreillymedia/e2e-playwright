@@ -28,6 +28,9 @@ const { expect } = require('@playwright/test');
  */
 class UsageEventTracker {
   constructor(page, { urlPattern }) {
+    if (!(urlPattern instanceof RegExp)) {
+      throw new Error('UsageEventTracker: urlPattern (RegExp) is required');
+    }
     this.urlPattern = urlPattern;
     this.entries = [];
     this.cursor = 0;
@@ -53,7 +56,7 @@ class UsageEventTracker {
     });
   }
 
-  /** Bound the next active window on its start side. Discards events captured so far. */
+  /** Advance the cursor so events captured before this call are excluded from the next assertActiveWindow. */
   markWindowStart() {
     this.cursor = this.entries.length;
   }
@@ -67,23 +70,29 @@ class UsageEventTracker {
       (e) => e.status !== null && (e.status < 200 || e.status >= 300),
     );
 
-    let summary;
-    if (count < min || count > max) {
+    const countOk = count >= min && count <= max;
+    if (!countOk) {
       this.violations.push({
         label,
         message: `expected ${min}–${max} events, got ${count}`,
       });
-      summary = `${count} events, expected ${min}–${max} ✗`;
-    } else if (nonOk.length > 0) {
+    }
+    if (nonOk.length > 0) {
       for (const e of nonOk) {
         this.violations.push({
           label,
           message: `response ${e.status} for ${e.url} at ${new Date(e.timestamp).toISOString()}`,
         });
       }
-      summary = `${count} events, ${nonOk.length} non-2xx ✗`;
-    } else {
+    }
+    let summary;
+    if (countOk && nonOk.length === 0) {
       summary = `${count} events, all 2xx ✓`;
+    } else {
+      const parts = [];
+      if (!countOk) parts.push(`expected ${min}–${max}, got ${count}`);
+      if (nonOk.length > 0) parts.push(`${nonOk.length} non-2xx`);
+      summary = `${count} events, ${parts.join('; ')} ✗`;
     }
     console.log(`[usage-event] ${label}: ${summary}`);
   }
