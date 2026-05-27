@@ -1,33 +1,36 @@
-  name: CI
+name: CI
 
-  on:
-    pull_request:
-    push:
-      branches: [main]
+on:
+  pull_request:
+  push:
+    branches: [main]
 
-  jobs:
-    checks:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-        - uses: actions/setup-node@v4
-          with:
-            node-version: 20
-            cache: npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
 
-        - name: Install
-          run: npm ci
+      - name: Install
+        run: npm ci
 
-        - name: Test syntax (parse all spec files)
-          run: npx playwright test --list > /dev/null
+      - name: Lint
+        run: npm run lint
 
-        - name: npm audit (high+)
-          run: npm audit --audit-level=high
+      - name: Test syntax (parse all spec files)
+        run: npx playwright test --list > /dev/null
 
-        - name: Secret scan
-          uses: trufflesecurity/trufflehog@main
-          with:
-            extra_args: --only-verified
+      - name: npm audit (high+)
+        run: npm audit --audit-level=high
+
+      - name: Secret scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
