@@ -174,6 +174,18 @@ If you're working on this repo with Claude Code or another MCP-capable assistant
 
 Install MCPs at the client level (e.g., in Claude Code's `settings.json`), not in this repo. They're developer tooling, not a runtime dependency.
 
+### Claude Code skills
+
+If you're working with Claude Code, the **`playwright-cli`** skill speeds up Playwright work even more than the Playwright MCP alone: it wraps the CLI with snapshot-aware commands (`open`, `goto`, `click <ref>`, `type`, `screenshot`) so the assistant can drive a browser and discover selectors interactively without a full `codegen` session.
+
+Install it via the plugin manager (one-time, at the client level):
+
+```
+/plugin install playwright@claude-plugins-official
+```
+
+After installing, the assistant can invoke the skill on demand — no per-repo setup needed.
+
 ### Browser DevTools tips
 
 - Use Playwright's **locator picker** (the "Pick locator" button in `--debug` or the VS Code extension) before writing selectors by hand — it prefers role-based locators which survive UI churn.
