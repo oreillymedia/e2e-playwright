@@ -25,7 +25,7 @@ async function waitForPaymentComplete(page) {
 
   // On team-setup after 3DS callback — check submit button state
   const submitBtn = page.frameLocator('#z_hppm_iframe').locator('#submitButton');
-  let buttonEnabled = false;
+  let buttonEnabled;
   try {
     await submitBtn.waitFor({ state: 'attached', timeout: 5000 });
     const ariaDisabled = await submitBtn.getAttribute('aria-disabled');
@@ -55,7 +55,7 @@ async function waitForPaymentComplete(page) {
   }
 
   // Re-check outside try/catch so waitForURL timeout propagates correctly
-  let stillEnabled = true;
+  let stillEnabled;
   try {
     const ariaDisabled = await submitBtn.getAttribute('aria-disabled');
     const classAttr = await submitBtn.getAttribute('class');
@@ -313,7 +313,6 @@ test.describe('Create New SS', () => {
   test('should create a new self-service account with a Payment Update and Cancellation', async ({ page }) => {
     test.setTimeout(180000);
     const id = uuidv4();
-    const newUser = createNewUserInfo({ type: 'Future_Cancel_Self-Service' });
     await page.goto('team-setup/');
     await page.locator('input[name="companyName"]').waitFor();
     await page.locator('input[name="companyName"]').fill(`Future Cancel Self-Service ${id.substring(0, 13)} Inc.`);

@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test } = require('@playwright/test');
 const { VIEWPORTS } = require('../../helpers/auth');
 const { USER_LOGINS } = require('../../fixtures/login');
 

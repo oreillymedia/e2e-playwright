@@ -20,7 +20,7 @@ async function waitForPaymentComplete(page) {
   if (page.url().includes('manage-users')) return;
 
   const submitBtn = page.frameLocator('#z_hppm_iframe').locator('#submitButton');
-  let buttonEnabled = false;
+  let buttonEnabled;
   try {
     await submitBtn.waitFor({ state: 'attached', timeout: 5000 });
     const ariaDisabled = await submitBtn.getAttribute('aria-disabled');
@@ -47,7 +47,7 @@ async function waitForPaymentComplete(page) {
     return;
   }
 
-  let stillEnabled = true;
+  let stillEnabled;
   try {
     const ariaDisabled = await submitBtn.getAttribute('aria-disabled');
     const classAttr = await submitBtn.getAttribute('class');

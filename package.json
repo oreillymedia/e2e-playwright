@@ -7,10 +7,15 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:prod": "PLAYWRIGHT_ENV=prod BASE_URL=https://learning.oreilly.com/ playwright test",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.0"
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.49.0",
+    "eslint": "^10.4.0",
+    "eslint-plugin-playwright": "^2.10.4",
+    "globals": "^17.6.0"
   },
   "dependencies": {
     "dayjs": "^1.9.6",
