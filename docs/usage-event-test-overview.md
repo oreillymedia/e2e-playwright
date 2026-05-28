@@ -16,7 +16,7 @@ Simulates a brand-new business (B2B) user signing up for `learning.oreilly.revie
 
 The test verifies the behavior at two layers:
 
-1. **Active reading windows are verified in-test** by `UsageEventTracker` (see `helpers/usageEventTracker.js`), which attaches Playwright network listeners to `/api/v2/usage-event/` requests and asserts (a) the count of events per active step falls within an expected range, and (b) every captured response is 2xx. A single `assertNoViolations()` call at the end of the test surfaces every per-step violation in one aggregated failure, so one 20-minute run produces a complete picture. Design notes: `docs/superpowers/specs/2026-05-27-ucv-reader-network-verification-design.md`.
+1. **Active reading windows are verified in-test** by `UsageEventTracker` (see `helpers/usageEventTracker.js`), which attaches Playwright network listeners to `/api/v2/usage-event/` requests and asserts (a) the count of events per active step falls within an expected range, and (b) every captured response is 2xx. A single `assertNoViolations()` call at the end of the test surfaces every per-step violation in one aggregated failure, so one full run produces a complete picture. Design notes: `docs/superpowers/specs/2026-05-27-ucv-reader-network-verification-design.md`.
 2. **Silent windows are still verified by pairing with the database** — the 30-second home-page wait in TEST 3 and the 3-minute idle in TEST 5 are not asserted in-test. To confirm those windows produced zero events, pair the step's wall-clock timestamps with the test user's email (`qa+b2busage-<timestamp>@oreillynet.com`) in the usage-event database.
 
 ## Steps
@@ -42,4 +42,4 @@ In the "Expected events" column, ranges in **bold** are asserted in-test by `Usa
 
 ## Where to find the user in the DB
 
-The test creates a one-off email per run: `qa+b2busage-<unix-millis>@oreillynet.com` where `<unix-millis>` is the timestamp when the test started. The exact email is logged at the start of each run.
+The test creates a one-off email per run: `qa+b2busage-<unix-millis>@oreillynet.com` where `<unix-millis>` is the timestamp when the test started. The exact email is printed to the run output as a `[test-user] qa+b2busage-...` line near the top of the log.

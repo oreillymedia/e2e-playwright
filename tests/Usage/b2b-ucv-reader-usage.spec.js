@@ -33,6 +33,9 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
   // Unique email per run so the OTP modal can proceed (the email must not
   // already exist in the auth system).
   const uniqueEmail = `qa+b2busage-${Date.now()}@oreillynet.com`;
+  // Print the test user's email so the human verifying silent windows in
+  // the database can pair this run's timestamps with the user.
+  console.log(`[test-user] ${uniqueEmail}`);
 
   // Capture /api/v2/usage-event/ requests so the test can assert per-step
   // counts and response status. See helpers/usageEventTracker.js for the

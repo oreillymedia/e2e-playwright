@@ -55,7 +55,7 @@ tracker.assertActiveWindow({
 });
 
 // Once, after the last test.step() returns:
-tracker.assertNoViolations();
+await tracker.assertNoViolations();
 ```
 
 ### Windowing semantics
@@ -93,7 +93,7 @@ Violation entry shapes:
 ```js
 { label: 'Step 2 — Chapter 2…', message: 'expected 2–6 events, got 0' }
 { label: 'Step 4 — Chapter 4…', message: 'response 503 for https://…/usage-event/ at 12:04:22' }
-{ label: 'Step 1 — Chapter 1…', message: 'pending response for 2 requests at finalize' }
+{ label: 'finalize', message: 'pending response for 2 requests at finalize' }
 ```
 
 All violations from all five steps surface in a single Playwright failure, so one 20-minute run produces a full picture rather than aborting at the first issue.
