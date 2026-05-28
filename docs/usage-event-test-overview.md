@@ -1,45 +1,26 @@
 # UCV Reader Usage-Event Coverage Test — Overview
 
-**File:** `tests/Usage/b2b-ucv-reader-usage.spec.js`
-**Average runtime:** ~10-12 minutes per run
+**File:** [`tests/Usage/b2b-ucv-reader-usage.spec.js`](../tests/Usage/b2b-ucv-reader-usage.spec.js)
+**Average runtime:** ~10–12 minutes per run
 
-## What this test does
+Simulates a new B2B user signing up to `learning.oreilly.review` and reading several chapters. Verifies that `/api/v2/usage-event/` requests fire while reading, stop on navigate-away, stop after ~2 min idle, and resume on interaction.
 
-Simulates a brand-new business (B2B) user signing up for `learning.oreilly.review` and reading several chapters of an O'Reilly book. While they read, the platform sends `/api/v2/usage-event/` requests every ~15 seconds to track engagement. This test confirms those requests:
+## Legend
 
-- **Fire** while the user is actively reading a chapter
-- **Stop** when the user navigates away from the reading experience
-- **Stop** after ~2 minutes of inactivity, even if the user is still on a chapter
-- **Resume** as soon as the user interacts again
-
-## How verification works
-
-The test verifies the behavior at two layers:
-
-1. **Active reading windows are verified in-test** by `UsageEventTracker` (see `helpers/usageEventTracker.js`), which attaches Playwright network listeners to `/api/v2/usage-event/` requests and asserts (a) the count of events per active step falls within an expected range, and (b) every captured response is 2xx. A single `assertNoViolations()` call at the end of the test surfaces every per-step violation in one aggregated failure, so one full run produces a complete picture. Design notes: `docs/superpowers/specs/2026-05-27-ucv-reader-network-verification-design.md`.
-2. **Silent windows are still verified by pairing with the database** — the 30-second home-page wait in TEST 3 and the 3-minute idle in TEST 5 are not asserted in-test. To confirm those windows produced zero events, pair the step's wall-clock timestamps with the test user's email (`qa+b2busage-<timestamp>@oreillynet.com`) in the usage-event database.
+- **Bold ranges** are asserted in-test by `UsageEventTracker` ([helper](../helpers/usageEventTracker.js), [design](superpowers/specs/2026-05-27-ucv-reader-network-verification-design.md)). Counts and 2xx response status are checked per step and aggregated into one failure at run end.
+- _DB-paired_ entries must be verified manually by querying the usage-event database for the test user during the named window.
 
 ## Steps
 
-In the "Expected events" column, ranges in **bold** are asserted in-test by `UsageEventTracker`. Phrases marked _DB-paired_ describe properties that must still be verified by pairing timestamps with the user's email in the database.
-
-| Step | Duration | What happens | Expected events |
+| Step | What | Expected events | Verifies |
 |---|---|---|---|
-| **USER CREATION** | ~30s | Self-registers a new B2B user (name, email, password, magic OTP code). | 0 — registration is not a chapter page |
-| **TEST 1: Chapter 1** | ~60s | User scrolls steadily to the bottom of Chapter 1 of *Learning API Styles*, then clicks the "Next" link at the end of the page to move to Chapter 2. | **2–6 events** (~4 expected) |
-| **TEST 2: Chapter 2** | ~60s | User scrolls steadily to the bottom of Chapter 2 (~30s), then scrolls back to the top (~30s), then opens the Table of Contents and clicks the TOC link for Chapter 3 to move there. | **2–6 events** (~4 expected) |
-| **TEST 3: Chapter 3 → Home** | ~60s | User reads Chapter 3 briefly, then clicks the O'Reilly logo to return to the home page and waits 30 seconds. | **1–4 events** during reading (~2 expected), then _DB-paired:_ **0 events** during the 30-second home-page window |
-| **TEST 4: Chapter 4 middle → top → bottom** | ~2.5 min | User scrolls Chapter 4 in three passes — to the middle (30s), back to the top (30s), all the way to the bottom (60s), then pauses 30 seconds at the bottom. Finally clicks the book title to return to the book detail page. | **6–14 events** across the 2.5 minutes of activity (~10 expected), then _DB-paired:_ **0 events** after leaving the chapter |
-| **TEST 5: Idle and reactivation on Chapter 5** | ~4.5 min | User reads Chapter 5 for 30 seconds, then **idles for 3 minutes** without touching the keyboard or mouse. After the idle, the user presses page-down 3 times to wake the session and reads for another 45 seconds. Finally returns to the home page. | ~2 events during the initial 30s reading (not asserted in-test — see TEST 5 below), _DB-paired:_ **0 events** during the 3-minute idle (after the ~2-min mark), then **1–5 events** post-reactivation (~3 expected) |
-
-## Why each step matters
-
-- **USER CREATION** — establishes a clean, isolated user account so the events tracked in the DB can't be confused with any other user's activity.
-- **TEST 1 & 2** — baseline confirmation that events fire as expected during normal reading on multiple chapters.
-- **TEST 3** — confirms events **stop** when the user leaves the reading experience. The 30-second window on the home page is the easiest place in the DB to verify zero activity for that user.
-- **TEST 4** — covers more complex reader behavior: scrolling around within a chapter, pausing while still on the page, and exiting via a different route (book detail page instead of home). Confirms events keep firing even during the "lingering" pause.
-- **TEST 5** — covers the two-stage session lifecycle: events should stop after 2 minutes of inactivity (saving server load), and resume the moment the user comes back. This is the most product-critical check because it confirms the inactivity timeout actually works.
+| **USER CREATION** | Self-register a new B2B user (name, email, password, OTP). | 0 — registration isn't a chapter page. | A clean isolated test user. |
+| **TEST 1: Chapter 1** | Scroll ch. 1 to the bottom (~60s), click "Next". | **2–6 events** (~4 expected). | Events fire during normal reading. |
+| **TEST 2: Chapter 2** | Scroll ch. 2 down then up (~60s total), open TOC, click ch. 3. | **2–6 events** (~4 expected). | Events fire across mixed scroll directions. |
+| **TEST 3: Chapter 3 → Home** | Read ch. 3 (~30s), click O'Reilly logo, wait 30s on home. | **1–4 events** while reading; _DB-paired: 0 events_ during the 30s home wait. | Events **stop** when leaving the reading experience. |
+| **TEST 4: Chapter 4** | Scroll ch. 4 middle → top → bottom, pause 30s at bottom, click book title. | **6–14 events** (~10 expected); _DB-paired: 0 events_ after leaving the chapter. | Events fire across complex scrolling and brief on-page pauses. |
+| **TEST 5: Chapter 5 idle/reactivation** | Read ch. 5 for 30s, idle 3 min, 3 page-downs, hold 45s, return home. | _DB-paired: 0 events_ during the 3-min idle (past the ~2-min threshold); **1–5 events** in the 45s post-reactivation (~3 expected). | Events **stop** after 2 min idle and **resume** on interaction — the most product-critical check. |
 
 ## Where to find the user in the DB
 
-The test creates a one-off email per run: `qa+b2busage-<unix-millis>@oreillynet.com` where `<unix-millis>` is the timestamp when the test started. The exact email is printed to the run output as a `[test-user] qa+b2busage-...` line near the top of the log.
+The test prints `[test-user] qa+b2busage-<unix-millis>@oreillynet.com` near the top of the run output. Use that email plus each step's wall-clock window to query the usage-event database for silent-window verification.
