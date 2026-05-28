@@ -110,7 +110,7 @@ await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
 
 ## Usage-event coverage spec
 
-`tests/Usage/b2b-ucv-reader-usage.spec.js` simulates a fresh B2B user signing up and reading multiple chapters of a UCV book. It's the canonical reference for verifying `/api/v2/usage-event/` behavior end-to-end.
+[`tests/Usage/b2b-ucv-reader-usage.spec.js`](tests/Usage/b2b-ucv-reader-usage.spec.js) simulates a fresh B2B user signing up and reading multiple chapters of a UCV book. It's the canonical reference for verifying `/api/v2/usage-event/` behavior end-to-end.
 
 **What it verifies:**
 - Events fire roughly every 15 seconds while the user is on a chapter URL (`.../ch0X.html`)
@@ -118,14 +118,9 @@ await page.locator('input[aria-label="digit 1 of 6"]').pressSequentially('a');
 - Events stop after ~2 minutes of inactivity even if the user stays on a chapter page
 - Events resume immediately after the user interacts again (page-down, scroll, etc.)
 
-**Step naming convention** — visible in the HTML report:
+**How verification works.** Active reading windows are asserted in-test by [`UsageEventTracker`](helpers/usageEventTracker.js): per-step counts must fall in an expected range and every captured response must be 2xx, with all per-step violations aggregated into one final failure. Silent windows (the 30s home wait in TEST 3, the 3-min idle in TEST 5) are verified manually in Coot Admin against the per-run test-user email — printed as `[test-user] qa+b2busage-<ms>@oreillynet.com` near the top of the log.
 
-| Step | Purpose |
-|---|---|
-| `USER CREATION` | Self-registration + OTP. Produces no events (non-chapter URL). |
-| `TEST 1`, `TEST 2`, ... | Each numbered test is one verifiable scenario with a clear wall-clock window. |
-
-To check results in the DB, match each step's start/end timestamps against the user's email — `qa+b2busage-<ms>@oreillynet.com`, generated per run.
+Full step-by-step breakdown: [`docs/usage-event-test-overview.md`](docs/usage-event-test-overview.md).
 
 **Runtime:** ~10-12 minutes per run, mostly because of the 3-minute idle window in the final test. The per-test timeout is bumped to 20 minutes via `test.setTimeout()` in the spec.
 
