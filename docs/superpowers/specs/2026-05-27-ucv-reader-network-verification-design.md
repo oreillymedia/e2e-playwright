@@ -121,7 +121,7 @@ Watchers tailing the run see progress without waiting for the final report.
 
 `assertActiveWindow()` is called at the end of each step's active phase, before any navigation that leaves the chapter URL (home logo, book-detail link) or before any extended idle wait.
 
-Step 5 has two `markWindowStart()` / `assertActiveWindow()` boundaries collapsed into one assertion — the 30s pre-idle scroll and the 45s post-reactivation scroll are both treated as a single active window with the 3-min idle in the middle filtered out. Concretely: call `markWindowStart()` before navigating to ch05, `markWindowStart()` again after the 3-min idle (immediately before the three wake page-downs) to discard any stray events captured during the idle, and `assertActiveWindow()` after the 45s hold. The combined range (3–8) accounts for both active sub-phases together.
+Step 5 calls `markWindowStart()` twice — once before navigating to ch05 (defensive, in case earlier silent-window events leaked) and a second time after the 3-min idle, immediately before the three wake page-downs. The second mark discards both the 30s pre-idle scroll events and any stray events that fired during the idle, leaving only the 45s post-reactivation window for the assertion. `assertActiveWindow()` is called after the 45s hold with a range of 1–5. This scopes the assertion specifically to the reactivation behavior — the property step 5 is meant to verify.
 
 ## Why not unit-test the helper
 
