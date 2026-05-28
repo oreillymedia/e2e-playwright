@@ -99,14 +99,20 @@ class UsageEventTracker {
 
   /** Wait briefly for in-flight responses, then fail if any violations were collected. */
   async assertNoViolations() {
+    // Only check pending responses for entries inside an asserted window
+    // (index < cursor). Entries captured after the last assertActiveWindow
+    // are trailing — typically a usage event that fired right before the
+    // test left the chapter URL — and the test never claimed those would
+    // be asserted, so a slow or cancelled response is not a violation.
+    const assertedEntries = () => this.entries.slice(0, this.cursor);
     const deadline = Date.now() + 5000;
     while (
       Date.now() < deadline &&
-      this.entries.some((e) => e.status === null)
+      assertedEntries().some((e) => e.status === null)
     ) {
       await new Promise((r) => setTimeout(r, 100));
     }
-    const pending = this.entries.filter((e) => e.status === null);
+    const pending = assertedEntries().filter((e) => e.status === null);
     if (pending.length > 0) {
       this.violations.push({
         label: 'finalize',
