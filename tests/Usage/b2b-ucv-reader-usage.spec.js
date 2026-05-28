@@ -12,9 +12,12 @@ import { UsageEventTracker } from '../../helpers/usageEventTracker.js';
  *   - stop after ~2 minutes of inactivity on a chapter page, and
  *   - resume once the user interacts with the page again.
  *
- * Each test.step() corresponds to one verifiable window in the database:
- * pair the step's wall-clock timestamps with the user's email to count
- * the events generated for that phase.
+ * Active reading windows are verified in-test by UsageEventTracker, which
+ * captures /api/v2/usage-event/ requests and asserts per-step counts and
+ * 2xx responses (see helpers/usageEventTracker.js). Silent windows — the
+ * 30s home wait in step 3 and the 3-min idle in step 5 — are still
+ * verified by pairing the step's wall-clock timestamps with the user's
+ * email in the database to confirm zero events.
  *
  * Notes:
  *   - The review env accepts the magic OTP `abc123` for self-registration.
@@ -53,6 +56,7 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
     { noWaitAfter: true }
   );
 
+  try {
   // USER CREATION: create a new B2B user via self-registration signup.
   // No usage events are expected during this step — registration is not
   // a chapter URL.
@@ -194,7 +198,7 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
   //   - 3 page-downs to wake session  → reactivation signal
   //   - 45s post-reactivation hold    → ~3 events should resume
   //   - return to home logo           → end of test (events stop again)
-  await test.step('Scroll to the middle of Chapter 5 and verify usage-event reactivation after a 3-minute idle by scrolling down t', async () => {
+  await test.step('Scroll to the middle of Chapter 5 and verify usage-event reactivation after a 3-minute idle by scrolling down then holding for 45 seconds', async () => {
     tracker.markWindowStart();
     await page.goto('https://learning.oreilly.review/library/view/learning-api-styles/9781098153984/ch05.html');
     // Active scrolling for 30 seconds so events are flowing before the idle.
@@ -204,8 +208,9 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
     }
     // Idle 3 minutes — passes the 2-min inactivity threshold so events stop.
     await page.waitForTimeout(180000);
-    // Re-mark the window so any stray events fired during the idle are
-    // discarded from the post-reactivation count.
+    // Re-mark the window to discard both the pre-idle scroll events and
+    // any stray events fired during the idle. Only the post-reactivation
+    // 45s window is asserted below (range 1–5).
     tracker.markWindowStart();
     // Three page-downs to wake the session — events should fire again.
     for (let i = 0; i < 3; i++) {
@@ -222,8 +227,11 @@ test('new B2B user registers and reads chapters 1-6 of a UCV book', async ({ pag
     // Leave the reading experience entirely — events should stop again.
     await page.getByRole('link', { name: "O'Reilly Home" }).click();
   });
-
-  // Aggregate all per-step violations into a single failure with a full report.
-  // Waits up to 5s for in-flight responses to land before evaluating.
-  await tracker.assertNoViolations();
+  } finally {
+    // Aggregate all per-step violations into a single failure with a full report.
+    // Runs even if a test.step() throws, so violations collected before the
+    // throw are still surfaced alongside the original failure.
+    // Waits up to 5s for in-flight responses to land before evaluating.
+    await tracker.assertNoViolations();
+  }
 });

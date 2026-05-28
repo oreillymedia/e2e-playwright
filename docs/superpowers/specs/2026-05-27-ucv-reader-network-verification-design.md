@@ -115,7 +115,7 @@ Watchers tailing the run see progress without waiting for the final report.
 | 2 | Chapter 2 — 30s down + 30s up | ~60s | ~4 | 2–6 |
 | 3 | Chapter 3 — 25 page-downs @ 1.2s | ~30s active (then 30s silent on home — not asserted) | ~2 | 1–4 |
 | 4 | Chapter 4 — 30s + 30s + 60s + 30s pause | ~150s | ~10 | 6–14 |
-| 5 | Chapter 5 — 30s active + 45s post-reactivation (3-min idle in middle — not asserted) | ~75s | ~5 | 3–8 |
+| 5 | Chapter 5 — 45s post-reactivation only (30s pre-idle and 3-min idle in middle — not asserted) | ~45s | ~3 | 1–5 |
 
 `markWindowStart()` is called immediately before the navigation that enters the chapter URL for that step's active phase (`page.goto(...)` for steps 1, 4, 5; the "Next" / TOC click for steps 2, 3). This ensures any events fired during chapter render belong to the new window, and any events fired during a preceding silent window do not. For step 1, calling it is optional since registration produces no events, but the spec includes it for symmetry.
 
