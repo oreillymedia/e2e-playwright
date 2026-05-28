@@ -12,18 +12,25 @@ Simulates a brand-new business (B2B) user signing up for `learning.oreilly.revie
 - **Stop** after ~2 minutes of inactivity, even if the user is still on a chapter
 - **Resume** as soon as the user interacts again
 
-Each step below produces a clear timestamp window. Pair the start/end of each step with the test user's email (`qa+b2busage-<timestamp>@oreillynet.com`) to count events in the database.
+## How verification works
+
+The test verifies the behavior at two layers:
+
+1. **Active reading windows are verified in-test** by `UsageEventTracker` (see `helpers/usageEventTracker.js`), which attaches Playwright network listeners to `/api/v2/usage-event/` requests and asserts (a) the count of events per active step falls within an expected range, and (b) every captured response is 2xx. A single `assertNoViolations()` call at the end of the test surfaces every per-step violation in one aggregated failure, so one 20-minute run produces a complete picture. Design notes: `docs/superpowers/specs/2026-05-27-ucv-reader-network-verification-design.md`.
+2. **Silent windows are still verified by pairing with the database** — the 30-second home-page wait in TEST 3 and the 3-minute idle in TEST 5 are not asserted in-test. To confirm those windows produced zero events, pair the step's wall-clock timestamps with the test user's email (`qa+b2busage-<timestamp>@oreillynet.com`) in the usage-event database.
 
 ## Steps
+
+In the "Expected events" column, ranges in **bold** are asserted in-test by `UsageEventTracker`. Phrases marked _DB-paired_ describe properties that must still be verified by pairing timestamps with the user's email in the database.
 
 | Step | Duration | What happens | Expected events |
 |---|---|---|---|
 | **USER CREATION** | ~30s | Self-registers a new B2B user (name, email, password, magic OTP code). | 0 — registration is not a chapter page |
-| **TEST 1: Chapter 1** | ~60s | User scrolls steadily to the bottom of Chapter 1 of *Learning API Styles*, then clicks the "Next" link at the end of the page to move to Chapter 2. | ~4 events |
-| **TEST 2: Chapter 2** | ~60s | User scrolls steadily to the bottom of Chapter 2 (~30s), then scrolls back to the top (~30s), then opens the Table of Contents and clicks the TOC link for Chapter 3 to move there. | ~4 events |
-| **TEST 3: Chapter 3 → Home** | ~60s | User reads Chapter 3 briefly, then clicks the O'Reilly logo to return to the home page and waits 30 seconds. | ~2 events during reading, then **0 events** during the 30-second home-page window (the "silent" check) |
-| **TEST 4: Chapter 4 middle → top → bottom** | ~2.5 min | User scrolls Chapter 4 in three passes — to the middle (30s), back to the top (30s), all the way to the bottom (60s), then pauses 30 seconds at the bottom. Finally clicks the book title to return to the book detail page. | ~10 events across the 2.5 minutes of activity, then **0** after leaving the chapter |
-| **TEST 5: Idle and reactivation on Chapter 5** | ~4.5 min | User reads Chapter 5 for 30 seconds, then **idles for 3 minutes** without touching the keyboard or mouse. After the idle, the user presses page-down 3 times to wake the session and reads for another 45 seconds. Finally returns to the home page. | ~2 events during the initial reading, **0 events** during the 3-minute idle (after ~2 min mark), then ~3 events after reactivation |
+| **TEST 1: Chapter 1** | ~60s | User scrolls steadily to the bottom of Chapter 1 of *Learning API Styles*, then clicks the "Next" link at the end of the page to move to Chapter 2. | **2–6 events** (~4 expected) |
+| **TEST 2: Chapter 2** | ~60s | User scrolls steadily to the bottom of Chapter 2 (~30s), then scrolls back to the top (~30s), then opens the Table of Contents and clicks the TOC link for Chapter 3 to move there. | **2–6 events** (~4 expected) |
+| **TEST 3: Chapter 3 → Home** | ~60s | User reads Chapter 3 briefly, then clicks the O'Reilly logo to return to the home page and waits 30 seconds. | **1–4 events** during reading (~2 expected), then _DB-paired:_ **0 events** during the 30-second home-page window |
+| **TEST 4: Chapter 4 middle → top → bottom** | ~2.5 min | User scrolls Chapter 4 in three passes — to the middle (30s), back to the top (30s), all the way to the bottom (60s), then pauses 30 seconds at the bottom. Finally clicks the book title to return to the book detail page. | **6–14 events** across the 2.5 minutes of activity (~10 expected), then _DB-paired:_ **0 events** after leaving the chapter |
+| **TEST 5: Idle and reactivation on Chapter 5** | ~4.5 min | User reads Chapter 5 for 30 seconds, then **idles for 3 minutes** without touching the keyboard or mouse. After the idle, the user presses page-down 3 times to wake the session and reads for another 45 seconds. Finally returns to the home page. | ~2 events during the initial 30s reading (not asserted in-test — see TEST 5 below), _DB-paired:_ **0 events** during the 3-minute idle (after the ~2-min mark), then **1–5 events** post-reactivation (~3 expected) |
 
 ## Why each step matters
 
